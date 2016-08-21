@@ -26,11 +26,12 @@ import java.util.List;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Loader;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener/* , LoaderCallbacks<List<MovieDetails>>*/{
+        implements NavigationView.OnNavigationItemSelectedListener , LoaderCallbacks<List<MovieDetails>>{
 
     private static final String THEMOVIEDB_POPULAR_MOVIES_REQUEST_URL = "http://api.themoviedb.org/3/movie/popular?api_key=55457b0f046c368efeaa2744b0a8eb5f";
     private MovieDetailsAdapter adapter;
@@ -38,44 +39,45 @@ public class MainActivity extends AppCompatActivity
     private ListView list_view;
     private TextView emptyStateView;
     private View progressBar;
-//
-//    @Override
-//    public void onLoaderReset(Loader<List<MovieDetails>> loader) {
-//        adapter.clear();
-//    }
-//
-//    @Override
-//    public void onLoadFinished(Loader<List<MovieDetails>> loader, List<MovieDetails> data) {
-//        progressBar.setVisibility(View.GONE);
-//        adapter.clear();
-//        if (data != null && !data.isEmpty()) {
-//            adapter.addAll(data);
-//        }
-//        else{
-//            //emptyStateView.setText(R.string.no_earthquakes);
-//        }
-//    }
-//
-//    @Override
-//    public Loader<List<MovieDetails>> onCreateLoader(int i, Bundle bundle) {
-//        return new MovieLoader(this, THEMOVIEDB_POPULAR_MOVIES_REQUEST_URL);
-//    }
+
+    @Override
+    public void onLoaderReset(Loader<List<MovieDetails>> loader) {
+        adapter.clear();
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<MovieDetails>> loader, List<MovieDetails> data) {
+        progressBar.setVisibility(View.GONE);
+        adapter.clear();
+        if (data != null && !data.isEmpty()) {
+            adapter.addAll(data);
+        }
+        else{
+            //emptyStateView.setText(R.string.no_earthquakes);
+        }
+    }
+
+    @Override
+    public Loader<List<MovieDetails>> onCreateLoader(int i, Bundle bundle) {
+        return new MovieLoader(this, THEMOVIEDB_POPULAR_MOVIES_REQUEST_URL);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
+        ImageButton searchButton= (ImageButton)findViewById(R.id.search) ;
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.search);
+        searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                       // .setAction("Action", null).show();
+               // onSearchRequested();
             }
         });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -86,29 +88,29 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         list_view= (ListView)findViewById(R.id.list);
         progressBar= (View)findViewById(R.id.loading_indicator);
-//
-//        adapter= new MovieDetailsAdapter(this, new ArrayList<MovieDetails>());
-//        list_view.setAdapter(adapter);
-//
-//        list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                MovieDetails currentMovie= adapter.getItem(i);
-//            }
-//        });
-//        ConnectivityManager connectivity_manager= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//        NetworkInfo network_info= connectivity_manager.getActiveNetworkInfo();
-//        if(network_info != null && network_info.isConnected()){
-//            loader_manager= getLoaderManager();
-//            loader_manager.initLoader(0, null, this);
-//        }
-//        else
-//        {
-//            emptyStateView=(TextView)findViewById(R.id.empty_view);
-//            progressBar.setVisibility(View.GONE);
-//            list_view.setEmptyView(emptyStateView);
-//            emptyStateView.setText(R.string.no_internet_connection);
-//        }
+
+        adapter= new MovieDetailsAdapter(this, new ArrayList<MovieDetails>());
+        list_view.setAdapter(adapter);
+
+        list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                MovieDetails currentMovie= adapter.getItem(i);
+            }
+        });
+        ConnectivityManager connectivity_manager= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo network_info= connectivity_manager.getActiveNetworkInfo();
+        if(network_info != null && network_info.isConnected()){
+            loader_manager= getLoaderManager();
+            loader_manager.initLoader(0, null, this);
+        }
+        else
+        {
+            emptyStateView=(TextView)findViewById(R.id.empty_view);
+            progressBar.setVisibility(View.GONE);
+            list_view.setEmptyView(emptyStateView);
+            emptyStateView.setText(R.string.no_internet_connection);
+        }
     }
 
     @Override

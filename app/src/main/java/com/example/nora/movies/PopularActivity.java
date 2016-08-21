@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +18,9 @@ import java.util.List;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Loader;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 /**
  * Created by Nora on 18/08/2016.
@@ -29,6 +33,8 @@ public class PopularActivity extends AppCompatActivity implements NavigationView
     private ListView list_view;
     private TextView emptyStateView;
     private View progressBar;
+    private Toolbar mainToolbar;
+    private SearchView search_view;
     @Override
     public void onLoaderReset(Loader<List<MovieDetails>> loader) {
         adapter.clear();
@@ -54,10 +60,37 @@ public class PopularActivity extends AppCompatActivity implements NavigationView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ActionBar toolbar = getSupportActionBar();
+        toolbar.setSubtitle(getResources().getString(R.string.popular_activity));
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         list_view= (ListView)findViewById(R.id.list);
         progressBar= (View)findViewById(R.id.loading_indicator);
+
+        //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.search);
+        ImageButton searchButton= (ImageButton)findViewById(R.id.search) ;
+        search_view= (SearchView) findViewById(R.id.search_view);
+        search_view.setVisibility(View.GONE);
+        mainToolbar= (Toolbar)findViewById(R.id.main_toolbar);
+        mainToolbar.setVisibility(View.GONE);
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                // .setAction("Action", null).show();
+                if( search_view.getVisibility()== View.VISIBLE){
+                    search_view.setVisibility(View.GONE);
+                    mainToolbar.setVisibility(View.GONE);
+                }
+                else if(search_view.getVisibility()== View.GONE){
+                    search_view.setVisibility(View.VISIBLE);
+                    mainToolbar.setVisibility(View.GONE);
+                }
+
+
+            }
+        });
 
         adapter= new MovieDetailsAdapter(this, new ArrayList<MovieDetails>());
         list_view.setAdapter(adapter);

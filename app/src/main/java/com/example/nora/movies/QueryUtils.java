@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,44 +28,72 @@ import java.util.List;
 
 public final class QueryUtils {
 
+    private static String query;
     private QueryUtils(){
-
+        query= null;
     }
-    public static List<MovieDetails> extractFeatureFromJSON(String movieJSON){
+    public QueryUtils(String queryy){
+        this.query= queryy;
+    }
+    public static List<MovieDetails> extractFeatureFromJSON(String movieJSON) {
 
-        if(TextUtils.isEmpty(movieJSON)){
+        if (TextUtils.isEmpty(movieJSON)) {
             return null;
         }
-        else {
-            List<MovieDetails> movies= new ArrayList<>();
+        else if(query == null){
+            List<MovieDetails> movies = new ArrayList<>();
             try {
 
-                JSONObject object= new JSONObject(movieJSON);
-//                JSONObject objectGetMovieImage= new JSONObject(MOVIE_IMAGE_BASE_URL.toString());
-                JSONArray moviesArray= object.getJSONArray("results");
-                //JSONArray imagesArray= objectGetMovieImage.getJSONArray("logo_sizes");
-                for(int counter= 0; counter< moviesArray.length(); counter++){
+                JSONObject object = new JSONObject(movieJSON);
+                JSONArray moviesArray = object.getJSONArray("results");
+                for (int counter = 0; counter < moviesArray.length(); counter++) {
 
-                    JSONObject currentMovie= moviesArray.getJSONObject(counter);
-                  //  JSONObject currentImage= imagesArray.getJSONObject(counter);
+                    JSONObject currentMovie = moviesArray.getJSONObject(counter);
 
-                    String title= currentMovie.getString("title");
-                    double rating= currentMovie.getDouble("vote_average");
-                    String posterPath= currentMovie.getString("poster_path");
-                    int id= currentMovie.getInt("id");
-                    Uri x= Uri.parse(posterPath);
-                    MovieDetails movie= new MovieDetails(title, rating, x, id);
+                    String title = currentMovie.getString("title");
+                    double rating = currentMovie.getDouble("vote_average");
+                    String posterPath = currentMovie.getString("poster_path");
+                    int id = currentMovie.getInt("id");
+                    Uri x = Uri.parse(posterPath);
+                    MovieDetails movie = new MovieDetails(title, rating, x, id);
                     movies.add(movie);
-
-
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             return movies;
-
         }
+
+        else if(query != null && !query.isEmpty()) {
+            List<MovieDetails> movies = new ArrayList<>();
+            try {
+
+                JSONObject object = new JSONObject(movieJSON);
+                JSONArray moviesArray = object.getJSONArray("results");
+                for (int counter = 0; counter < moviesArray.length(); counter++) {
+
+                    JSONObject currentMovie = moviesArray.getJSONObject(counter);
+
+                    String title = currentMovie.getString("title");
+                    double rating = currentMovie.getDouble("vote_average");
+                    String posterPath = currentMovie.getString("poster_path");
+                    int id = currentMovie.getInt("id");
+                    Uri x = Uri.parse(posterPath);
+                    if (title.contains(query)){
+                        MovieDetails movie = new MovieDetails(title, rating, x, id);
+                        movies.add(movie);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return movies;
+        }
+        else
+            return null;
     }
+
+
     private static URL createUrl(String urlString) {
         URL url = null;
         try {

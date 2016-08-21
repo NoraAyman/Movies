@@ -28,6 +28,7 @@ public class MovieDetailsAdapter extends ArrayAdapter<MovieDetails> {
     private ImageView poster;
     private static final String MOVIE_IMAGE_BASE_URL= "http://image.tmdb.org/t/p/w780";
 
+
     public MovieDetailsAdapter(Context context, List<MovieDetails> movies){
         super(context, 0, movies);
 
