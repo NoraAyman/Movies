@@ -29,18 +29,41 @@ import java.util.List;
 public final class QueryUtils {
 
     private static String query;
+    private static Boolean personQuery= false;
     private QueryUtils(){
-        query= null;
+        query= "";
+        personQuery= false;
     }
-    public QueryUtils(String queryy){
-        this.query= queryy;
+    public QueryUtils(String query){
+        this.query= query;
+        personQuery= false;
+    }
+    public QueryUtils(Boolean status){
+        personQuery= status;
+    }
+    public QueryUtils(String query, Boolean personQuery){
+        this.query= query;
+        this.personQuery= personQuery;
+
+    }
+    public String getQuery(){
+        return query;
+    }
+    public void setQuery(String q){
+        this.query= q;
+    }
+    public Boolean getPersonQuery(){
+        return this.getPersonQuery();
+    }
+    public void setPersonQuery(Boolean status){
+        this.personQuery= status;
     }
     public static List<MovieDetails> extractFeatureFromJSON(String movieJSON) {
 
         if (TextUtils.isEmpty(movieJSON)) {
             return null;
         }
-        else if(query == null){
+        else if(query == null && personQuery==false){
             List<MovieDetails> movies = new ArrayList<>();
             try {
 
@@ -64,11 +87,12 @@ public final class QueryUtils {
             return movies;
         }
 
-        else if(query != null && !query.isEmpty()) {
+        else if(query != null && !query.isEmpty() && personQuery==false) {
+
             List<MovieDetails> movies = new ArrayList<>();
             try {
 
-                JSONObject object = new JSONObject(movieJSON);
+                JSONObject object = new JSONObject(movieJSON );
                 JSONArray moviesArray = object.getJSONArray("results");
                 for (int counter = 0; counter < moviesArray.length(); counter++) {
 
@@ -79,17 +103,65 @@ public final class QueryUtils {
                     String posterPath = currentMovie.getString("poster_path");
                     int id = currentMovie.getInt("id");
                     Uri x = Uri.parse(posterPath);
-                    if (title.contains(query)){
-                        MovieDetails movie = new MovieDetails(title, rating, x, id);
-                        movies.add(movie);
-                    }
+                    MovieDetails movie = new MovieDetails(title, rating, x, id);
+                    movies.add(movie);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             return movies;
         }
+        else if(query != null && !query.isEmpty() && personQuery== true){
+            List<MovieDetails> movies = new ArrayList<>();
+            try {
+
+                JSONObject object = new JSONObject(movieJSON );
+                JSONArray moviesArray = object.getJSONArray("results");
+                for (int counter = 0; counter < moviesArray.length(); counter++) {
+
+                    JSONObject currentMovie = moviesArray.getJSONObject(counter);
+
+                    String name = currentMovie.getString("name");
+                    double popularity = currentMovie.getDouble("popularity");
+                    String profilePath = currentMovie.getString("profile_path");
+                    int id = currentMovie.getInt("id");
+                    Uri x = Uri.parse(profilePath);
+                    MovieDetails movie = new MovieDetails(name, popularity, x, id);
+                    movies.add(movie);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            personQuery= false;
+            return movies;
+        }
+        else if(personQuery== true){
+            List<MovieDetails> movies = new ArrayList<>();
+            try {
+
+                JSONObject object = new JSONObject(movieJSON );
+                JSONArray moviesArray = object.getJSONArray("results");
+                for (int counter = 0; counter < moviesArray.length(); counter++) {
+
+                    JSONObject currentMovie = moviesArray.getJSONObject(counter);
+
+                    String name = currentMovie.getString("name");
+                    double popularity = currentMovie.getDouble("popularity");
+                    String profilePath = currentMovie.getString("profile_path");
+                    int id = currentMovie.getInt("id");
+                    Uri x = Uri.parse(profilePath);
+                    MovieDetails movie = new MovieDetails(name, popularity, x, id);
+                    movies.add(movie);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            personQuery= false;
+            return movies;
+        }
+
         else
+        Log.e("hjvk","gkhj");
             return null;
     }
 

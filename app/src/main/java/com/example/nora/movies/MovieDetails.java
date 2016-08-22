@@ -8,12 +8,21 @@ import android.net.Uri;
 
 public class MovieDetails {
 
-    private String movieTitle;
+    private String name, movieTitle;
     private double movieRating;
     private Uri imagePath;
     private int id;
     public MovieDetails(String movieTitle, double movieRating, Uri imagePath, int id){
 
+        this.movieTitle= movieTitle;
+        this.movieRating= movieRating;
+        this.imagePath= imagePath;
+        this.id= id;
+
+    }
+    public MovieDetails(String name, String movieTitle, double movieRating, Uri imagePath, int id){
+
+        this.name= name;
         this.movieTitle= movieTitle;
         this.movieRating= movieRating;
         this.imagePath= imagePath;
@@ -26,6 +35,14 @@ public class MovieDetails {
     public double getMovieRating(){
         return this.movieRating;
     }
-    public Uri getImagePath(){ return  this.imagePath; }
-    public int getId(){ return this.id; }
+    public Uri getImagePath()
+    { return  this.imagePath;
+    }
+    public int getId(){
+        return this.id;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 }

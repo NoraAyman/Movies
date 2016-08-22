@@ -1,41 +1,40 @@
 package com.example.nora.movies;
-
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
-
+import android.view.View;
+import android.support.v7.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.List;
-
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Loader;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
+/**
+ * Created by Nora on 18/08/2016.
+ */
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener , LoaderCallbacks<List<MovieDetails>>{
-
+public class PopularMoviesActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderCallbacks<List<MovieDetails>>{
     private static final String THEMOVIEDB_POPULAR_MOVIES_REQUEST_URL = "http://api.themoviedb.org/3/movie/popular?api_key=55457b0f046c368efeaa2744b0a8eb5f";
     private MovieDetailsAdapter adapter;
     private LoaderManager loader_manager;
     private ListView list_view;
     private TextView emptyStateView;
     private View progressBar;
-
+    private Toolbar mainToolbar;
+    private SearchView search_view;
     @Override
     public void onLoaderReset(Loader<List<MovieDetails>> loader) {
         adapter.clear();
@@ -61,29 +60,55 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        setSupportActionBar(toolbar);
-        ImageButton searchButton= (ImageButton)findViewById(R.id.search) ;
-
-        //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.search);
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                       // .setAction("Action", null).show();
-               // onSearchRequested();
-            }
-        });
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
+        ActionBar toolbar = getSupportActionBar();
+        toolbar.setSubtitle(getResources().getString(R.string.popular_activity));
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         list_view= (ListView)findViewById(R.id.list);
         progressBar= (View)findViewById(R.id.loading_indicator);
+
+        //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.search);
+        ImageButton searchButton= (ImageButton)findViewById(R.id.search) ;
+        search_view= (SearchView) findViewById(R.id.search_view);
+        search_view.setVisibility(View.GONE);
+        mainToolbar= (Toolbar)findViewById(R.id.main_toolbar);
+        mainToolbar.setVisibility(View.GONE);
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                // .setAction("Action", null).show();
+                if( search_view.getVisibility()== View.VISIBLE){
+                    search_view.setVisibility(View.GONE);
+                    mainToolbar.setVisibility(View.GONE);
+                }
+                else if(search_view.getVisibility()== View.GONE){
+                    search_view.setVisibility(View.VISIBLE);
+                    mainToolbar.setVisibility(View.GONE);
+                }
+
+
+            }
+        });
+        search_view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                SearchableMovieActivity object= new SearchableMovieActivity(s);
+                object.setQuery(s);
+                Intent x= new Intent(list_view.getContext(), SearchableMovieActivity.class);
+                startActivity(x);
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                SearchableMovieActivity object= new SearchableMovieActivity(s);
+                object.setQuery(s);
+                return false;
+            }
+        });
 
         adapter= new MovieDetailsAdapter(this, new ArrayList<MovieDetails>());
         list_view.setAdapter(adapter);
@@ -108,41 +133,6 @@ public class MainActivity extends AppCompatActivity
             emptyStateView.setText(R.string.no_internet_connection);
         }
     }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -166,6 +156,4 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-
 }

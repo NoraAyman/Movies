@@ -1,7 +1,9 @@
 package com.example.nora.movies;
+
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -9,34 +11,50 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.support.v7.app.AppCompatActivity;
-import java.util.ArrayList;
-import java.util.List;
-import android.app.LoaderManager.LoaderCallbacks;
-import android.content.Loader;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Created by Nora on 18/08/2016.
+ * Created by Nora on 21/08/2016.
  */
 
-public class PopularActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderCallbacks<List<MovieDetails>>{
-    private static final String THEMOVIEDB_POPULAR_MOVIES_REQUEST_URL = "http://api.themoviedb.org/3/movie/popular?api_key=55457b0f046c368efeaa2744b0a8eb5f";
+public class SearchableMovieActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<List<MovieDetails>> {
+
+    private static final String MOVIE_SEARCH= "http://api.themoviedb.org/3/search/movie?api_key=55457b0f046c368efeaa2744b0a8eb5f&query=";
+    private static String query;
+
+    public SearchableMovieActivity()
+    {
+        //query= "";
+    }
+    public SearchableMovieActivity(String query){
+
+        this.query= query;
+    }
+    public String getQuery(){
+        return this.query; }
+    public void setQuery(String q){
+        this.query= q;
+    }
     private MovieDetailsAdapter adapter;
     private LoaderManager loader_manager;
     private ListView list_view;
     private TextView emptyStateView;
     private View progressBar;
-    private Toolbar mainToolbar;
     private SearchView search_view;
+    private Toolbar mainToolbar;
     @Override
-    public void onLoaderReset(Loader<List<MovieDetails>> loader) {
+    public void onLoaderReset(Loader<List<MovieDetails>> loader)
+    {
         adapter.clear();
     }
 
@@ -46,28 +64,27 @@ public class PopularActivity extends AppCompatActivity implements NavigationView
         adapter.clear();
         if (data != null && !data.isEmpty()) {
             adapter.addAll(data);
-        }
-        else{
+        } else {
             //emptyStateView.setText(R.string.no_earthquakes);
         }
     }
 
     @Override
     public Loader<List<MovieDetails>> onCreateLoader(int i, Bundle bundle) {
-        return new MovieLoader(this, THEMOVIEDB_POPULAR_MOVIES_REQUEST_URL);
+        QueryUtils x= new QueryUtils(this.query);
+        x.setQuery(this.query);
+        return new MovieLoader(this, MOVIE_SEARCH + this.query);
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ActionBar toolbar = getSupportActionBar();
-        toolbar.setSubtitle(getResources().getString(R.string.popular_activity));
+        list_view = (ListView) findViewById(R.id.list);
+        final ActionBar toolbar = getSupportActionBar();
+        toolbar.setSubtitle("Search Results: ");
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        list_view= (ListView)findViewById(R.id.list);
-        progressBar= (View)findViewById(R.id.loading_indicator);
-
-        //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.search);
+        progressBar = (View) findViewById(R.id.loading_indicator);
         ImageButton searchButton= (ImageButton)findViewById(R.id.search) ;
         search_view= (SearchView) findViewById(R.id.search_view);
         search_view.setVisibility(View.GONE);
@@ -91,36 +108,45 @@ public class PopularActivity extends AppCompatActivity implements NavigationView
 
             }
         });
+        search_view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
 
-        adapter= new MovieDetailsAdapter(this, new ArrayList<MovieDetails>());
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+        adapter = new MovieDetailsAdapter(this, new ArrayList<MovieDetails>());
         list_view.setAdapter(adapter);
 
         list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                MovieDetails currentMovie= adapter.getItem(i);
+                MovieDetails currentMovie = adapter.getItem(i);
             }
         });
-        ConnectivityManager connectivity_manager= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo network_info= connectivity_manager.getActiveNetworkInfo();
-        if(network_info != null && network_info.isConnected()){
-            loader_manager= getLoaderManager();
+        ConnectivityManager connectivity_manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo network_info = connectivity_manager.getActiveNetworkInfo();
+        if (network_info != null && network_info.isConnected()) {
+            loader_manager = getLoaderManager();
             loader_manager.initLoader(0, null, this);
-        }
-        else
-        {
-            emptyStateView=(TextView)findViewById(R.id.empty_view);
+        } else {
+            emptyStateView = (TextView) findViewById(R.id.empty_view);
             progressBar.setVisibility(View.GONE);
             list_view.setEmptyView(emptyStateView);
             emptyStateView.setText(R.string.no_internet_connection);
         }
+
     }
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_popular) {
-            Intent popular= new Intent(list_view.getContext(), PopularActivity.class);
+            Intent popular= new Intent(list_view.getContext(), PopularMoviesActivity.class);
             this.startActivity(popular);
         } else if (id == R.id.nav_top_rated) {
             Intent topRated= new Intent(list_view.getContext(), TopRatedActivity.class);
@@ -131,10 +157,13 @@ public class PopularActivity extends AppCompatActivity implements NavigationView
             this.startActivity(nowPlaying);
 
         } else if (id == R.id.nav_people) {
+            Intent popularPerson= new Intent(list_view.getContext(), PopularPersonActivity.class);
+            this.startActivity(popularPerson);
 
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }

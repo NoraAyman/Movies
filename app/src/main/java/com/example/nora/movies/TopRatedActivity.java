@@ -92,6 +92,24 @@ public class TopRatedActivity extends AppCompatActivity implements NavigationVie
 
             }
         });
+        search_view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                SearchableMovieActivity object= new SearchableMovieActivity(s);
+                object.setQuery(s);
+                Intent x= new Intent(list_view.getContext(), SearchableMovieActivity.class);
+                startActivity(x);
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                SearchableMovieActivity object= new SearchableMovieActivity(s);
+                object.setQuery(s);
+                return false;
+            }
+        });
 
         adapter= new MovieDetailsAdapter(this, new ArrayList<MovieDetails>());
         list_view.setAdapter(adapter);
@@ -121,7 +139,7 @@ public class TopRatedActivity extends AppCompatActivity implements NavigationVie
         int id = item.getItemId();
 
         if (id == R.id.nav_popular) {
-            Intent popular= new Intent(list_view.getContext(), PopularActivity.class);
+            Intent popular= new Intent(list_view.getContext(), PopularMoviesActivity.class);
             this.startActivity(popular);
         } else if (id == R.id.nav_top_rated) {
             Intent topRated= new Intent(list_view.getContext(), TopRatedActivity.class);
@@ -132,7 +150,8 @@ public class TopRatedActivity extends AppCompatActivity implements NavigationVie
             this.startActivity(nowPlaying);
 
         } else if (id == R.id.nav_people) {
-
+            Intent popularPerson= new Intent(list_view.getContext(), PopularPersonActivity.class);
+            this.startActivity(popularPerson);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

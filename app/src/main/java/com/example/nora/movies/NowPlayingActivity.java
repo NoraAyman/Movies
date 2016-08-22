@@ -9,11 +9,9 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SearchViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -25,11 +23,9 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Loader;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class NowPlayingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderCallbacks<List<MovieDetails>>{
     private static final String THEMOVIEDB_NOW_PLAYING_MOVIES_REQUEST_URL = "http://api.themoviedb.org/3/movie/now_playing?api_key=55457b0f046c368efeaa2744b0a8eb5f";
@@ -98,8 +94,9 @@ public class NowPlayingActivity extends AppCompatActivity implements NavigationV
         search_view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                QueryUtils object= new QueryUtils(s);
-                Intent x= new Intent(list_view.getContext(), SearchableActivity.class);
+                SearchableMovieActivity object= new SearchableMovieActivity(s);
+                object.setQuery(s);
+                Intent x= new Intent(list_view.getContext(), SearchableMovieActivity.class);
                 startActivity(x);
 
                 return false;
@@ -107,7 +104,8 @@ public class NowPlayingActivity extends AppCompatActivity implements NavigationV
 
             @Override
             public boolean onQueryTextChange(String s) {
-                QueryUtils object= new QueryUtils(s);
+                SearchableMovieActivity object= new SearchableMovieActivity(s);
+                object.setQuery(s);
                 return false;
             }
         });
@@ -138,7 +136,7 @@ public class NowPlayingActivity extends AppCompatActivity implements NavigationV
         int id = item.getItemId();
 
         if (id == R.id.nav_popular) {
-            Intent popular= new Intent(list_view.getContext(), PopularActivity.class);
+            Intent popular= new Intent(list_view.getContext(), PopularMoviesActivity.class);
             this.startActivity(popular);
         } else if (id == R.id.nav_top_rated) {
             Intent topRated= new Intent(list_view.getContext(), TopRatedActivity.class);
@@ -149,6 +147,8 @@ public class NowPlayingActivity extends AppCompatActivity implements NavigationV
             this.startActivity(nowPlaying);
 
         } else if (id == R.id.nav_people) {
+            Intent popularPerson= new Intent(list_view.getContext(), PopularPersonActivity.class);
+            this.startActivity(popularPerson);
 
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
