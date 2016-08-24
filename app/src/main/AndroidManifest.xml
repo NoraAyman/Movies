@@ -27,6 +27,10 @@
         <activity android:name=".PopularPersonActivity"></activity>
         <activity android:name=".SearchableMovieActivity"></activity>
         <activity android:name=".SearchablePersonActivity"></activity>
+        <activity android:name=".OpenMovieLinkActivity"></activity>
+        <activity android:name=".OpenPersonLinkActivity"></activity>
+
+
     </application>
 
 </manifest>

@@ -36,6 +36,10 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/list_items" />
+    <include layout="@layout/list_items_link_opened_movie" />
+    <include layout="@layout/list_items_link_opened_person" />
+
+
 
 
     <RelativeLayout

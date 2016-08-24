@@ -26,9 +26,9 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-public class TopRatedActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderCallbacks<List<MovieDetails>>{
+public class TopRatedActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderCallbacks<List<MoviePersonDetails>>{
     private static final String THEMOVIEDB_TOP_RATED_MOVIES_REQUEST_URL = "http://api.themoviedb.org/3/movie/top_rated?api_key=55457b0f046c368efeaa2744b0a8eb5f";
-    private MovieDetailsAdapter adapter;
+    private DetailsAdapter adapter;
     private LoaderManager loader_manager;
     private ListView list_view;
     private TextView emptyStateView;
@@ -38,12 +38,12 @@ public class TopRatedActivity extends AppCompatActivity implements NavigationVie
 
 
     @Override
-    public void onLoaderReset(Loader<List<MovieDetails>> loader) {
+    public void onLoaderReset(Loader<List<MoviePersonDetails>> loader) {
         adapter.clear();
     }
 
     @Override
-    public void onLoadFinished(Loader<List<MovieDetails>> loader, List<MovieDetails> data) {
+    public void onLoadFinished(Loader<List<MoviePersonDetails>> loader, List<MoviePersonDetails> data) {
         progressBar.setVisibility(View.GONE);
         adapter.clear();
         if (data != null && !data.isEmpty()) {
@@ -55,20 +55,19 @@ public class TopRatedActivity extends AppCompatActivity implements NavigationVie
     }
 
     @Override
-    public Loader<List<MovieDetails>> onCreateLoader(int i, Bundle bundle) {
-        return new MovieLoader(this, THEMOVIEDB_TOP_RATED_MOVIES_REQUEST_URL);
+    public Loader<List<MoviePersonDetails>> onCreateLoader(int i, Bundle bundle) {
+        return new DetailsLoader(this, THEMOVIEDB_TOP_RATED_MOVIES_REQUEST_URL);
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ActionBar toolbar = getSupportActionBar();
-       // toolbar.setSubtitle(getResources().getString(R.string.top_rated));
+        final ActionBar toolbar = getSupportActionBar();
+        toolbar.setSubtitle(getResources().getString(R.string.top_rated));
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         list_view= (ListView)findViewById(R.id.list);
         progressBar= (View)findViewById(R.id.loading_indicator);
-//FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.search);
         ImageButton searchButton= (ImageButton)findViewById(R.id.search) ;
         search_view= (SearchView) findViewById(R.id.search_view);
         search_view.setVisibility(View.GONE);
@@ -78,8 +77,6 @@ public class TopRatedActivity extends AppCompatActivity implements NavigationVie
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                // .setAction("Action", null).show();
                 if( search_view.getVisibility()== View.VISIBLE){
                     search_view.setVisibility(View.GONE);
                     mainToolbar.setVisibility(View.GONE);
@@ -111,13 +108,17 @@ public class TopRatedActivity extends AppCompatActivity implements NavigationVie
             }
         });
 
-        adapter= new MovieDetailsAdapter(this, new ArrayList<MovieDetails>());
+        adapter= new DetailsAdapter(this, new ArrayList<MoviePersonDetails>());
         list_view.setAdapter(adapter);
 
         list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                MovieDetails currentMovie= adapter.getItem(i);
+                MoviePersonDetails currentMovie= adapter.getItem(i);
+                adapter.setLinkStatus(true);
+                OpenMovieLinkActivity object= new OpenMovieLinkActivity(currentMovie.getId(), true);
+                Intent openLink= new Intent(list_view.getContext(), OpenMovieLinkActivity.class);
+                startActivity(openLink);
             }
         });
         ConnectivityManager connectivity_manager= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);

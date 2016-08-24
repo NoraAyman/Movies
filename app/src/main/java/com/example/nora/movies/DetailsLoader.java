@@ -8,10 +8,10 @@ import java.util.List;
  * Created by Nora on 18/08/2016.
  */
 
-public class MovieLoader extends android.content.AsyncTaskLoader<List<MovieDetails>> {
+public class DetailsLoader extends android.content.AsyncTaskLoader<List<MoviePersonDetails>> {
 
     private String url;
-    public MovieLoader(Context context, String url){
+    public DetailsLoader(Context context, String url){
         super(context);
         this.url= url;
     }
@@ -21,12 +21,12 @@ public class MovieLoader extends android.content.AsyncTaskLoader<List<MovieDetai
     }
 
     @Override
-    public List<MovieDetails> loadInBackground() {
+    public List<MoviePersonDetails> loadInBackground() {
         if (url== null) {
             return null;
         }
 
-        List<MovieDetails> result = QueryUtils.fetchMovieData(url);
+        List<MoviePersonDetails> result = QueryUtils.fetchMovieData(url);
         return result;
     }
 }

@@ -28,9 +28,9 @@ import java.util.List;
  * Created by Nora on 22/08/2016.
  */
 
-public class PopularPersonActivity  extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<List<MovieDetails>> {
+public class PopularPersonActivity  extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<List<MoviePersonDetails>> {
     private static final String THEMOVIEDB_POPULAR__PERSONS_REQUEST_URL = "http://api.themoviedb.org/3/person/popular?api_key=55457b0f046c368efeaa2744b0a8eb5f";
-    private MovieDetailsAdapter adapter;
+    private DetailsAdapter adapter;
     private LoaderManager loader_manager;
     private ListView list_view;
     private TextView emptyStateView;
@@ -38,12 +38,12 @@ public class PopularPersonActivity  extends AppCompatActivity implements Navigat
     private SearchView search_view;
     private Toolbar mainToolbar;
     @Override
-    public void onLoaderReset(Loader<List<MovieDetails>> loader) {
+    public void onLoaderReset(Loader<List<MoviePersonDetails>> loader) {
         adapter.clear();
     }
 
     @Override
-    public void onLoadFinished(Loader<List<MovieDetails>> loader, List<MovieDetails> data) {
+    public void onLoadFinished(Loader<List<MoviePersonDetails>> loader, List<MoviePersonDetails> data) {
         progressBar.setVisibility(View.GONE);
         adapter.clear();
         if (data != null && !data.isEmpty()) {
@@ -54,10 +54,10 @@ public class PopularPersonActivity  extends AppCompatActivity implements Navigat
     }
 
     @Override
-    public Loader<List<MovieDetails>> onCreateLoader(int i, Bundle bundle) {
+    public Loader<List<MoviePersonDetails>> onCreateLoader(int i, Bundle bundle) {
         QueryUtils status= new QueryUtils(true);
         status.setPersonQuery(true);
-        return new MovieLoader(this, THEMOVIEDB_POPULAR__PERSONS_REQUEST_URL);
+        return new DetailsLoader(this, THEMOVIEDB_POPULAR__PERSONS_REQUEST_URL);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class PopularPersonActivity  extends AppCompatActivity implements Navigat
         setContentView(R.layout.activity_main);
         list_view = (ListView) findViewById(R.id.list);
         final ActionBar toolbar = getSupportActionBar();
-        toolbar.setSubtitle(getResources().getString(R.string.now_playing));
+        toolbar.setSubtitle(getResources().getString(R.string.popular_people));
         final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         progressBar = (View) findViewById(R.id.loading_indicator);
@@ -111,13 +111,18 @@ public class PopularPersonActivity  extends AppCompatActivity implements Navigat
                 return false;
             }
         });
-        adapter = new MovieDetailsAdapter(this, new ArrayList<MovieDetails>());
+        adapter = new DetailsAdapter(this, new ArrayList<MoviePersonDetails>());
         list_view.setAdapter(adapter);
 
         list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                MovieDetails currentMovie = adapter.getItem(i);
+                MoviePersonDetails currentMovie = adapter.getItem(i);
+                adapter.setLinkStatus(false);
+                OpenPersonLinkActivity object= new OpenPersonLinkActivity(currentMovie.getId(), true);
+                Intent openLink= new Intent(list_view.getContext(), OpenPersonLinkActivity.class);
+                startActivity(openLink);
+
             }
         });
         ConnectivityManager connectivity_manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
