@@ -24,6 +24,7 @@ import android.content.Loader;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -69,7 +70,8 @@ public class MainActivity extends AppCompatActivity
         ImageButton searchButton= (ImageButton)findViewById(R.id.search) ;
         search_view= (SearchView) findViewById(R.id.search_view);
         search_view.setVisibility(View.GONE);
-
+        RelativeLayout rel= (RelativeLayout)findViewById(R.id.relative);
+        rel.setPadding(0, 167,0,0);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -98,6 +98,7 @@ public class DetailsAdapter extends ArrayAdapter<MoviePersonDetails>{
                 personBiography.setText(currentPerson.getBiography());
                 Picasso.with(this.getContext()).load(Uri.parse(MOVIE_IMAGE_BASE_URL + currentPerson.getPersonPicture())).into(personPicture);
                 this.personStatus= false;
+                this.linkStatus= false;
 
             }
 

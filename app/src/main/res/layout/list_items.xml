@@ -1,60 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:layout_height="match_parent"
     android:orientation="horizontal"
     android:id="@+id/list_item"
-    android:divider="@null"
-    android:dividerHeight="0dp"
-    android:paddingEnd="16dp"
-    android:paddingLeft="16dp"
-    android:paddingTop="16dp"
-    android:paddingRight="16dp"
-    android:paddingStart="16dp"
+    android:paddingLeft="7dp"
+    android:paddingRight="7dp"
+    android:paddingTop="7dp"
     >
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_weight="1"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
 
         >
         <ImageView
             android:id="@+id/movie_poster"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="center"
-            android:paddingTop="0dp"
-
+            android:layout_height="100dp"
+            android:scaleType="fitXY"
+            android:background="@color/colorPrimaryDark"
             />
         <TextView
             android:id="@+id/movie_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:ellipsize="end"
             android:maxLines="1"
             android:layout_gravity="center_vertical"
-            android:paddingTop="0dp"
-
+            android:paddingLeft="7dp"
             />
         <TextView
             android:id="@+id/movie_rating"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:layout_gravity="end"
-            android:padding="7dp"
+            android:layout_gravity="center_vertical|end"
+            android:textAlignment="viewEnd"
 
             />
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:padding="7dp"
             android:ellipsize="end"
-            android:layout_gravity="end"
+            android:layout_gravity="center_vertical"
 
             android:src="@drawable/rating"/>
 

@@ -38,6 +38,7 @@ public class NowPlayingActivity extends AppCompatActivity implements NavigationV
     private Toolbar mainToolbar;
     @Override
     public void onLoaderReset(Loader<List<MoviePersonDetails>> loader) {
+
         adapter.clear();
     }
 
@@ -47,6 +48,9 @@ public class NowPlayingActivity extends AppCompatActivity implements NavigationV
         adapter.clear();
         if (data != null && !data.isEmpty()) {
             adapter.addAll(data);
+            adapter.notifyDataSetChanged();
+
+
         } else {
             //emptyStateView.setText(R.string.no_earthquakes);
         }

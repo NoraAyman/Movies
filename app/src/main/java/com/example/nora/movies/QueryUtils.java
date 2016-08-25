@@ -83,9 +83,13 @@ public final class QueryUtils {
                     MoviePersonDetails movie = new MoviePersonDetails(title, rating, x, id);
                     movies.add(movie);
                 }
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            personStatus= false;
+            query= null;
+            linkStatus= false;
             return movies;
         }
 
@@ -111,6 +115,9 @@ public final class QueryUtils {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            personStatus= false;
+            query= null;
+            linkStatus= false;
             return movies;
         }
         else if(query != null && !query.isEmpty() && personQuery== true && linkStatus == false && personStatus == false){
@@ -135,6 +142,9 @@ public final class QueryUtils {
                 e.printStackTrace();
             }
             personQuery= false;
+            linkStatus= false;
+            personStatus= false;
+            query= null;
             return movies;
         }
         else if(personQuery== true && personStatus == false){
@@ -158,7 +168,9 @@ public final class QueryUtils {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            personQuery= false;
+            personStatus= false;
+            query= null;
+            linkStatus= false;
             return movies;
         }
         else if(linkStatus == true && personStatus == false){
@@ -193,8 +205,9 @@ public final class QueryUtils {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            linkStatus= false;
+            personStatus= false;
             query= null;
+            linkStatus= false;
             return movies;
         }
         else if(personStatus == true && linkStatus == false){
@@ -227,6 +240,7 @@ public final class QueryUtils {
             }
             personStatus= false;
             query= null;
+            linkStatus= false;
             return movies;
         }
 
