@@ -24,14 +24,19 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import Loaders.MovieDetailsLoader;
+import Loaders.PersonDetailsLoader;
+import adapters.MovieListDetailsAdapter;
+import adapters.PersonDetailsAdapter;
+
 /**
  * Created by Nora on 24/08/2016.
  */
 
 public class OpenPersonLinkActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        LoaderManager.LoaderCallbacks<List<MoviePersonDetails>> {
+        LoaderManager.LoaderCallbacks<List<PersonDetails>> {
 
-    private DetailsAdapter adapter;
+    private PersonDetailsAdapter adapter;
     private LoaderManager loader_manager;
     private ListView list_view;
     private TextView emptyStateView;
@@ -44,18 +49,17 @@ public class OpenPersonLinkActivity extends AppCompatActivity implements Navigat
     public OpenPersonLinkActivity(){
         //id= 0;
     }
-    public OpenPersonLinkActivity(int id, Boolean status){
+    public OpenPersonLinkActivity(int id){
         this.id= id;
-        this.personStatus=status;
     }
     @Override
-    public void onLoaderReset(Loader<List<MoviePersonDetails>> loader) {
+    public void onLoaderReset(Loader<List<PersonDetails>> loader) {
         adapter.clear();
 
     }
 
     @Override
-    public void onLoadFinished(Loader<List<MoviePersonDetails>> loader, List<MoviePersonDetails> data) {
+    public void onLoadFinished(Loader<List<PersonDetails>> loader, List<PersonDetails> data) {
         progressBar.setVisibility(View.GONE);
         adapter.clear();
         if (data != null && !data.isEmpty()) {
@@ -68,12 +72,10 @@ public class OpenPersonLinkActivity extends AppCompatActivity implements Navigat
     }
 
     @Override
-    public Loader<List<MoviePersonDetails>> onCreateLoader(int i, Bundle bundle) {
-        adapter.setLinkStatus(false);
-        adapter.setPersonStatus(true);
+    public Loader<List<PersonDetails>> onCreateLoader(int i, Bundle bundle) {
         QueryUtils x = new QueryUtils();
-        x.setPersonStatus(true);
-        return new DetailsLoader(this, THEMOVIEDB_PERSON_REQUESTED_URL +
+        x.setPersonLinkStatus(true);
+        return new PersonDetailsLoader(this, THEMOVIEDB_PERSON_REQUESTED_URL +
                 id + "?api_key=55457b0f046c368efeaa2744b0a8eb5f");
     }
 
@@ -127,13 +129,13 @@ public class OpenPersonLinkActivity extends AppCompatActivity implements Navigat
                 return false;
             }
         });
-        adapter = new DetailsAdapter(this, new ArrayList<MoviePersonDetails>());
+        adapter = new PersonDetailsAdapter(this, new ArrayList<PersonDetails>());
         list_view.setAdapter(adapter);
 
         list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                MoviePersonDetails currentPerson = adapter.getItem(i);
+                PersonDetails currentPerson = adapter.getItem(i);
 
             }
         });

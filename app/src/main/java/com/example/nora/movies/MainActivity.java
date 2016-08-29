@@ -28,11 +28,14 @@ import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import Loaders.MovieDetailsLoader;
+import adapters.MovieListDetailsAdapter;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener , LoaderCallbacks<List<MoviePersonDetails>>{
+        implements NavigationView.OnNavigationItemSelectedListener , LoaderCallbacks<List<MovieDetails>>{
 
     private static final String THEMOVIEDB_POPULAR_MOVIES_REQUEST_URL = "http://api.themoviedb.org/3/movie/popular?api_key=55457b0f046c368efeaa2744b0a8eb5f";
-    private DetailsAdapter adapter;
+    private MovieListDetailsAdapter adapter;
     private LoaderManager loader_manager;
     private ListView list_view;
     private TextView emptyStateView;
@@ -40,16 +43,17 @@ public class MainActivity extends AppCompatActivity
     private SearchView search_view;
 
     @Override
-    public void onLoaderReset(Loader<List<MoviePersonDetails>> loader) {
+    public void onLoaderReset(Loader<List<MovieDetails>> loader) {
         adapter.clear();
     }
 
     @Override
-    public void onLoadFinished(Loader<List<MoviePersonDetails>> loader, List<MoviePersonDetails> data) {
+    public void onLoadFinished(Loader<List<MovieDetails>> loader, List<MovieDetails> data) {
         progressBar.setVisibility(View.GONE);
         adapter.clear();
         if (data != null && !data.isEmpty()) {
             adapter.addAll(data);
+            adapter.notifyDataSetChanged();
         }
         else{
             //emptyStateView.setText(R.string.no_earthquakes);
@@ -57,8 +61,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public Loader<List<MoviePersonDetails>> onCreateLoader(int i, Bundle bundle) {
-        return new DetailsLoader(this, THEMOVIEDB_POPULAR_MOVIES_REQUEST_URL);
+    public Loader<List<MovieDetails>> onCreateLoader(int i, Bundle bundle) {
+        return new MovieDetailsLoader(this, THEMOVIEDB_POPULAR_MOVIES_REQUEST_URL);
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +99,7 @@ public class MainActivity extends AppCompatActivity
         list_view= (ListView)findViewById(R.id.list);
         progressBar= (View)findViewById(R.id.loading_indicator);
 
-        adapter= new DetailsAdapter(this, new ArrayList<MoviePersonDetails>());
+        adapter= new MovieListDetailsAdapter(this, new ArrayList<MovieDetails>());
         list_view.setAdapter(adapter);
         search_view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -118,8 +122,8 @@ public class MainActivity extends AppCompatActivity
         list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                MoviePersonDetails currentMovie= adapter.getItem(i);
-                adapter.setLinkStatus(true);
+                MovieDetails currentMovie= adapter.getItem(i);
+               // adapter.setLinkStatus(true);
                 OpenMovieLinkActivity object= new OpenMovieLinkActivity(currentMovie.getId(), true);
                 Intent openLink= new Intent(list_view.getContext(), OpenMovieLinkActivity.class);
                 startActivity(openLink);
@@ -138,6 +142,8 @@ public class MainActivity extends AppCompatActivity
             list_view.setEmptyView(emptyStateView);
             emptyStateView.setText(R.string.no_internet_connection);
         }
+        adapter.clear();
+
     }
 
     @Override

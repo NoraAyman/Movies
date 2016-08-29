@@ -24,14 +24,17 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import Loaders.MovieDetailsLoader;
+import adapters.MovieDetailsAdapter;
+
 /**
  * Created by Nora on 23/08/2016.
  */
 
 public class OpenMovieLinkActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        LoaderManager.LoaderCallbacks<List<MoviePersonDetails>> {
+        LoaderManager.LoaderCallbacks<List<MovieDetails>> {
 
-    private DetailsAdapter adapter;
+    private MovieDetailsAdapter adapter;
     private LoaderManager loader_manager;
     private ListView list_view;
     private TextView emptyStateView;
@@ -49,13 +52,13 @@ public class OpenMovieLinkActivity extends AppCompatActivity implements Navigati
         this.status=status;
     }
     @Override
-    public void onLoaderReset(Loader<List<MoviePersonDetails>> loader) {
+    public void onLoaderReset(Loader<List<MovieDetails>> loader) {
         adapter.clear();
 
     }
 
     @Override
-    public void onLoadFinished(Loader<List<MoviePersonDetails>> loader, List<MoviePersonDetails> data) {
+    public void onLoadFinished(Loader<List<MovieDetails>> loader, List<MovieDetails> data) {
         progressBar.setVisibility(View.GONE);
         adapter.clear();
         if (data != null && !data.isEmpty()) {
@@ -68,11 +71,10 @@ public class OpenMovieLinkActivity extends AppCompatActivity implements Navigati
     }
 
     @Override
-    public Loader<List<MoviePersonDetails>> onCreateLoader(int i, Bundle bundle) {
-        adapter.setLinkStatus(true);
+    public Loader<List<MovieDetails>> onCreateLoader(int i, Bundle bundle) {
         QueryUtils x = new QueryUtils();
-        x.setLinkStatus(true);
-        return new DetailsLoader(this, THEMOVIEDB_MOVIE_REQUESTED_URL +
+        x.setMovieLinkStatus(true);
+        return new MovieDetailsLoader(this, THEMOVIEDB_MOVIE_REQUESTED_URL +
                 id + "?api_key=55457b0f046c368efeaa2744b0a8eb5f");
     }
 
@@ -126,13 +128,13 @@ public class OpenMovieLinkActivity extends AppCompatActivity implements Navigati
                 return false;
             }
         });
-        adapter = new DetailsAdapter(this, new ArrayList<MoviePersonDetails>());
+        adapter = new MovieDetailsAdapter(this, new ArrayList<MovieDetails>());
         list_view.setAdapter(adapter);
 
         list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                MoviePersonDetails currentMovie = adapter.getItem(i);
+                MovieDetails currentMovie = adapter.getItem(i);
 
             }
         });

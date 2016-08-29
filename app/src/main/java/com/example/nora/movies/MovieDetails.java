@@ -6,15 +6,15 @@ import android.net.Uri;
  * Created by Nora on 18/08/2016.
  */
 
-public class MoviePersonDetails {
+public class MovieDetails {
 
     private String name, movieTitle, genre, movieDescription, dateOfBirth, placeOfBirth, biography, dateOfDeath;
     private double movieRating;
     private Uri imagePath, personPicture;
     private int id;
     private String releaseDate;
-    public  MoviePersonDetails(String name, String dateOfBirth, String placeOfBirth,
-                               String biography, int id, Uri personPicture, String dateOfDeath){
+    public MovieDetails(String name, String dateOfBirth, String placeOfBirth,
+                        String biography, int id, Uri personPicture, String dateOfDeath){
         this.name= name;
         this.dateOfBirth= dateOfBirth;
         this.placeOfBirth= placeOfBirth;
@@ -23,7 +23,7 @@ public class MoviePersonDetails {
         this.personPicture= personPicture;
         this.dateOfDeath= dateOfDeath;
     }
-    public MoviePersonDetails(String movieTitle, double movieRating, Uri imagePath, int id){
+    public MovieDetails(String movieTitle, double movieRating, Uri imagePath, int id){
 
         this.movieTitle= movieTitle;
         this.movieRating= movieRating;
@@ -31,7 +31,7 @@ public class MoviePersonDetails {
         this.id= id;
 
     }
-    public MoviePersonDetails(String name, String movieTitle, double movieRating, Uri imagePath, int id){
+    public MovieDetails(String name, String movieTitle, double movieRating, Uri imagePath, int id){
 
         this.name= name;
         this.movieTitle= movieTitle;
@@ -40,8 +40,8 @@ public class MoviePersonDetails {
         this.id= id;
 
     }
-    public MoviePersonDetails(String movieTitle, String genre, String releaseDate,
-                              String movieDescription, double movieRating, Uri imagePath, int id){
+    public MovieDetails(String movieTitle, String genre, String releaseDate,
+                        String movieDescription, double movieRating, Uri imagePath, int id){
 
         this.movieTitle= movieTitle;
         this.movieRating= movieRating;
